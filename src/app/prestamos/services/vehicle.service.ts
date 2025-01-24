@@ -7,7 +7,7 @@ import { Vehicle } from '../models/vehicle.model';
     providedIn: 'root'
 })
 export class VehicleService {
-    private apiUrl = 'http://localhost:8080/api/vehicles';
+    private apiUrl = 'https://controlprendario.up.railway.app/api/vehicles';
 
     constructor(private http: HttpClient) { }
 

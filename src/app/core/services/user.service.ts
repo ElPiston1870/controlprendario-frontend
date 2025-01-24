@@ -7,7 +7,7 @@ import { Observable } from "rxjs";
     providedIn: 'root'
   })
   export class UserService {
-    private apiUrl = 'http://localhost:8080/api/users';
+    private apiUrl = 'https://controlprendario.up.railway.app/api/users';
   
     constructor(private http: HttpClient) {}
   

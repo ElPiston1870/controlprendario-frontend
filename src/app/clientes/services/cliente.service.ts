@@ -7,7 +7,7 @@ import { Cliente } from '../models/cliente.interface';
     providedIn: 'root'
 })
 export class ClienteService {
-    private apiUrl = 'http://localhost:8080/api/clientes';
+    private apiUrl = 'https://controlprendario.up.railway.app/api/clientes';
 
     private httpOptions = {
         headers: new HttpHeaders({

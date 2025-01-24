@@ -7,7 +7,7 @@ import { Prestamo } from '../../prestamos/models/prestamo.interface';
   providedIn: 'root'
 })
 export class PublicPrestamoService {
-  private apiUrl = `http://localhost:8080/api/public/prestamos`;
+  private apiUrl = `https://controlprendario.up.railway.app/api/public/prestamos`;
 
   constructor(private http: HttpClient) { }
 

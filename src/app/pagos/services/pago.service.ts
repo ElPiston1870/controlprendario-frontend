@@ -9,8 +9,8 @@ import { Prestamo } from '../../prestamos/models/prestamo.interface';
   providedIn: 'root'
 })
 export class PagoService {
-  private apiUrlPrestamos = 'http://localhost:8080/api/pagos';
-  private apiUrlMaquinas = ' http://localhost:8080/api/pagos-maquinas';
+  private apiUrlPrestamos = 'https://controlprendario.up.railway.app/api/pagos';
+  private apiUrlMaquinas = 'https://controlprendario.up.railway.app/api/pagos-maquinas';
 
   private httpOptions = {
     headers: new HttpHeaders({

@@ -10,7 +10,7 @@ import { PrestamoMaquina } from '../models/prestamomaquina.interface';
     providedIn: 'root'
   })
   export class PrestamoService {
-    private apiUrl = 'http://localhost:8080/api/prestamos';
+    private apiUrl = 'https://controlprendario.up.railway.app/api/prestamos';
     private httpOptions = {
       headers: new HttpHeaders({
         'Content-Type': 'application/json'

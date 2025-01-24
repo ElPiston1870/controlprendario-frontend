@@ -23,7 +23,7 @@ export interface Balance {
   providedIn: 'root'
 })
 export class MovimientoService {
-  private apiUrl = 'http://localhost:8080/api/movimientos';
+  private apiUrl = 'https://controlprendario.up.railway.app/api/movimientos';
 
   private httpOptions = {
     headers: new HttpHeaders({
