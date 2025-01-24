@@ -1,0 +1,288 @@
+<app-header></app-header>
+<div class="pagina d-flex">
+    <app-sidebar class="lateral container-mt-fluid"></app-sidebar>
+    <div class="cuerpo flex-grow-1">
+        <main class="">
+            <div class="container mx-auto px-6 py-8">
+                <div class=" titulo d-flex align-items-center justify-content-between ">
+                    <h2 class="text-success">{{ 'LOANS.TITLE' | translate }}</h2>
+                   
+                    
+                    <!-- Button trigger modal -->
+                    <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                        {{ 'LOANS.NEW_LOAN' | translate }}
+                    </button>
+                    
+                    <!-- Modal -->
+                    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                        <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                            <h1 class="modal-title fs-5" id="exampleModalLabel">Tipo de prestamo</h1>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body d-flex justify-content-between">
+                                <button 
+                                class="btn btn-success hover:bg-blue-600 text-white font-bold py-2 px-4 rounded"
+                                data-bs-dismiss="modal"
+                                (click)="navigateToCreate()">
+                                    Prestamo Vehicular 
+                                </button>
+                                <button  class="btn btn-success hover:bg-blue-600 text-white font-bold py-2 px-4 rounded"
+                                data-bs-dismiss="modal"
+                                (click)="navigateToCreateA()">
+                                    Prestamo Máquina
+                                </button>
+                            </div>
+                            
+                        </div>
+                        </div>
+                    </div>
+                </div>
+
+                <select
+                [(ngModel)]="selectTable" 
+                (change)="onTableChange()" 
+                    class="mb-2 p-2 border rounded"
+                    
+                >
+                    <option value="vehiculos">Vehículos</option>
+                    <option value="maquinas">Máquinas</option>
+                </select>
+
+                <div class="d-flex justify-content-between align-items-center ">
+                    <div class="text-muted">
+                        Mostrando {{ (currentPage - 1) * pageSize + 1 }} - 
+                        {{ Math.min(currentPage * pageSize, totalItems) }} 
+                        de {{ totalItems }} elementos
+                    </div>
+                    
+                    <nav aria-label="Page navigation">
+                        <ul class="pagination">
+                            <li class="page-item" [class.disabled]="currentPage === 1">
+                                <button class="page-link" 
+                                        (click)="onPageChange(currentPage - 1)"
+                                        [disabled]="currentPage === 1">
+                                    Anterior
+                                </button>
+                            </li>
+                            
+                            <li class="page-item" 
+                                *ngFor="let page of pages"
+                                [class.active]="page === currentPage">
+                                <button *ngIf="page !== -1" 
+                                        class="page-link" 
+                                        (click)="onPageChange(page)">
+                                    {{ page }}
+                                </button>
+                                <span *ngIf="page === -1" class="page-link">...</span>
+                            </li>
+                            
+                            <li class="page-item" [class.disabled]="currentPage === totalPages">
+                                <button class="page-link"
+                                        (click)="onPageChange(currentPage + 1)"
+                                        [disabled]="currentPage === totalPages">
+                                    Siguiente
+                                </button>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+
+               
+                <!-- Loading State -->
+                <div *ngIf="loading" class="flex justify-center items-center py-8">
+                    <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
+                </div>
+
+                <!-- Error State -->
+                <div *ngIf="error" class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4">
+                    {{ error }}
+                </div>
+
+                <!-- Table -->
+                <div *ngIf="!loading && !error" class=" shadow-md rounded-lg overflow-hidden taba">
+                    
+                    <div class="d-flex align-items-center justify-content-between buscador_tabla" [formGroup]="filtrosForm">
+                        
+                        <input type="text" 
+                               formControlName="numeroPrestamo"
+                               placeholder="{{ 'LOANS.NUMBER' | translate }}" 
+                               class="form-control me-2">
+                               
+                        <input type="text" 
+                               formControlName="nombreCliente"
+                               placeholder="{{ 'LOANS.CLIENT' | translate }}" 
+                               class="form-control me-2">
+                               
+                        <input type="date" 
+                               formControlName="fechaCreacion"
+                               placeholder="{{ 'LOANS.CREATION_DATE' | translate }}" 
+                               class="form-control me-2">
+                               
+                        <input type="date" 
+                               formControlName="fechaVencimiento"
+                               placeholder="{{ 'LOANS.DUE_DATE' | translate }}" 
+                               class="form-control me-2">
+                               
+                        <select formControlName="estado" 
+                               class="form-control me-2">
+                           <option value="">{{ 'LOANS.STATUS' | translate }}</option>
+                           <option *ngFor="let estado of estadosPrestamo" [value]="estado">
+                               {{ 'LOANS.STATUS_' + estado | translate }}
+                           </option>
+                       </select>
+                        
+                       <button class="btn btn-outline-success" 
+                       (click)="limpiarFiltros()">
+                           <i class="bi bi-x-circle"></i>
+                          {{ 'LOANS.CLEAR' | translate }}
+                        </button>
+                    </div>
+
+                    <div class="overflow-x-auto">
+                        <table class="tabla ">
+                            <thead class="cabeza-tabla">
+                                <tr class="text-success">
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        {{ 'LOANS.NUMBER' | translate }}
+                                    </th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        {{ 'LOANS.CLIENT' | translate }}
+                                    </th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        {{ 'LOANS.CREATION_DATE' | translate }}
+                                    </th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        {{ 'LOANS.DUE_DATE' | translate }}
+                                    </th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        {{ 'LOANS.TOTAL' | translate }}
+                                    </th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        Intereses
+                                    </th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        {{ 'LOANS.PAID' | translate }}
+                                    </th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        {{ 'LOANS.BALANCE' | translate }}
+                                    </th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        {{ 'LOANS.STATUS' | translate }}
+                                    </th>
+                                    <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        {{ 'LOANS.ACTIONS' | translate }}
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody class="tabla_cuerpo text-success">
+                                <tr *ngFor="let prestamo  of prestamosAPaginar" >
+                                    <td >
+                                       {{ getId(prestamo) }}
+                                    </td>
+                                    <td >
+                                        <div class="text-sm text-gray-900">
+                                            {{ prestamo.cliente?.nombres }} {{ prestamo.cliente?.apellidos }}
+                                        </div>
+                                        <div class="text-xs text-gray-500">
+                                            {{ prestamo.cliente?.numeroDocumento }}
+                                        </div>
+                                    </td>
+                                    <td >
+                                        {{ formatDate(prestamo.fechaPrestamo!) }}
+                                    </td>
+                                    <td >
+                                        {{ formatDate(prestamo.fechaVencimiento!) }}
+                                    </td>
+                                    <td>
+                                        ${{ prestamo.montoPrestamo | number:'1.2-2' }}
+                                    </td>
+                                    <td>
+                                        ${{ prestamo.resumenPagos?.interesPendiente | number: '1.2-2'}}
+                                    </td>
+                                    <td>
+                                        ${{ prestamo.totalAbonado | number:'1.2-2' }}
+                                    </td>
+                                    <td>
+                                        ${{ prestamo.saldoPendiente | number:'1.2-2' }}
+                                    </td>
+                                    <td >
+                                        <span class="badge" 
+                                                  [ngClass]="{
+                                                    'bg-success': prestamo.estadoPrestamo === 'ACTIVO',
+                                                    'bg-danger': prestamo.estadoPrestamo === 'VENCIDO',
+                                                    'bg-info': prestamo.estadoPrestamo === 'PAGADO'
+                                                  }">
+                                                {{ 'LOAN_STATUS.' + prestamo.estadoPrestamo | translate }}
+                                        </span>
+                                    </td>
+                                    <td >
+                                        <button (click)="verPrestamo(prestamo)" class="btn btn-sm me-2">
+                                            <i class="bi bi-eye text-success"></i>
+                                        </button>
+                                        <button 
+                                            (click)="navigateToEdit(prestamo)"
+                                            class="btn btn-sm">
+                                            <i class="bi bi-pencil text-success"></i>
+                                        </button>
+                                        <button 
+                                            (click)="deletePrestamo(prestamo)"
+                                            class="btn btn-sm">
+                                            <i class="bi bi-x-lg text-success"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                                <!-- Empty State -->
+                                <tr *ngIf="prestamosAPaginar.length === 0">
+                                    <td colspan="9" class="px-6 py-4 text-center text-gray-500">
+                                        {{ 'LOANS.NO_LOANS_FOUND' | translate }}
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center mt-4">
+                        <div class="text-muted">
+                            Mostrando {{ (currentPage - 1) * pageSize + 1 }} - 
+                            {{ Math.min(currentPage * pageSize, totalItems) }} 
+                            de {{ totalItems }} elementos
+                        </div>
+                        
+                        <nav aria-label="Page navigation">
+                            <ul class="pagination">
+                                <li class="page-item" [class.disabled]="currentPage === 1">
+                                    <button class="page-link" 
+                                            (click)="onPageChange(currentPage - 1)"
+                                            [disabled]="currentPage === 1">
+                                        Anterior
+                                    </button>
+                                </li>
+                                
+                                <li class="page-item" 
+                                    *ngFor="let page of pages"
+                                    [class.active]="page === currentPage">
+                                    <button *ngIf="page !== -1" 
+                                            class="page-link" 
+                                            (click)="onPageChange(page)">
+                                        {{ page }}
+                                    </button>
+                                    <span *ngIf="page === -1" class="page-link">...</span>
+                                </li>
+                                
+                                <li class="page-item" [class.disabled]="currentPage === totalPages">
+                                    <button class="page-link"
+                                            (click)="onPageChange(currentPage + 1)"
+                                            [disabled]="currentPage === totalPages">
+                                        Siguiente
+                                    </button>
+                                </li>
+                            </ul>
+                        </nav>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+    
+</div>

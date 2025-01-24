@@ -1,0 +1,258 @@
+<app-header></app-header>
+<div class="pagina d-flex">
+    <app-sidebar class="lateral container-mt-fluid"></app-sidebar>
+    <div class="cuerpo flex-grow-1">
+        <main class="flex-1 overflow-x-hidden overflow-y-auto bg-gray-100">
+            <div class="container mx-auto px-6 py-8">
+                <div class="titulo d-flex align-items-center justify-content-between">
+                    <h2 class="text-success">{{ 'PAYMENTS.TITLE' | translate }}</h2>
+                    
+                    <!-- Button trigger modal -->
+                    <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                        {{ 'PAYMENTS.NEW_PAYMENT' | translate }}
+                    </button>
+                    
+                    <!-- Modal -->
+                    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                        <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                            <h1 class="modal-title fs-5" id="exampleModalLabel">Tipo de pago</h1>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body d-flex justify-content-between">
+                                <button 
+                                    data-bs-dismiss="modal"
+                                    (click)="navigateToCreate()"
+                                    class="btn btn-success hover:bg-blue-600 text-white font-bold py-2 px-4 rounded">
+                                    Pago Vehícular
+                                </button>
+                                <button  class="btn btn-success hover:bg-blue-600 text-white font-bold py-2 px-4 rounded"
+                                    data-bs-dismiss="modal"
+                                    (click)="navigateToCrearMaquina()"
+                                >
+                                    Pago Maquina
+                                </button>
+                            </div>
+                        </div>
+                        </div>
+                    </div>
+                </div>
+
+                <select
+                [(ngModel)]="selectTable" 
+                (change)="onTableChange()" 
+                class="mb-4 p-2 border rounded"
+                                
+                >
+                    <option value="vehiculos">Vehículos</option>
+                     <option value="maquinas">Máquinas</option>
+                </select>
+
+                <div class="d-flex justify-content-between align-items-center">
+                    <div class="text-muted">
+                        Mostrando {{ (currentPage - 1) * pageSize + 1 }} - 
+                        {{ Math.min(currentPage * pageSize, totalItems) }} 
+                        de {{ totalItems }} elementos
+                    </div>
+                    
+                    <nav aria-label="Page navigation">
+                        <ul class="pagination">
+                            <li class="page-item" [class.disabled]="currentPage === 1">
+                                <button class="page-link" 
+                                        (click)="onPageChange(currentPage - 1)"
+                                        [disabled]="currentPage === 1">
+                                    Anterior
+                                </button>
+                            </li>
+                            
+                            <li class="page-item" 
+                                *ngFor="let page of pages"
+                                [class.active]="page === currentPage">
+                                <button *ngIf="page !== -1" 
+                                        class="page-link" 
+                                        (click)="onPageChange(page)">
+                                    {{ page }}
+                                </button>
+                                <span *ngIf="page === -1" class="page-link">...</span>
+                            </li>
+                            
+                            <li class="page-item" [class.disabled]="currentPage === totalPages">
+                                <button class="page-link"
+                                        (click)="onPageChange(currentPage + 1)"
+                                        [disabled]="currentPage === totalPages">
+                                    Siguiente
+                                </button>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+
+                <!-- Loading State -->
+                <div *ngIf="loading" class="flex justify-center items-center py-8">
+                    <div class="spinner-border text-success" role="status">
+                        <span class="visually-hidden">{{ 'PAYMENTS.LOADING' | translate }}</span>
+                    </div>
+                </div>
+
+                <!-- Error State -->
+                <div *ngIf="error" class="alert alert-danger" role="alert">
+                    {{ error }}
+                </div>
+
+                <!-- Table -->
+                <div *ngIf="!loading && !error" class=" shadow-md rounded-lg overflow-hidden">
+                    
+                    <div class="d-flex align-items-center justify-content-between buscador_tabla" [formGroup]="filtrosForm">
+                        <input type="text" 
+                               formControlName="nombreCliente"
+                               placeholder="{{ 'PAYMENTS.SEARCH_BY_CLIENT' | translate }}" 
+                               class="form-control me-2">
+                               
+                        <input type="date" 
+                               formControlName="fechaPago"
+                               placeholder="{{ 'PAYMENTS.PAYMENT_DATE' | translate }}" 
+                               class="form-control me-2">
+                               
+                               <select formControlName="tipoPago" 
+                               class="form-control me-2">
+                           <option value="">{{ 'PAYMENTS.PAYMENT_TYPE' | translate }}</option>
+                           <option *ngFor="let tipo of tiposPago" [value]="tipo">
+                               {{ 'PAYMENT_TYPES.' + tipo | translate }}
+                           </option>
+                       </select>
+                       
+                       <select formControlName="metodoPago" 
+                               class="form-control me-2">
+                           <option value="">{{ 'PAYMENTS.PAYMENT_METHOD' | translate }}</option>
+                           <option *ngFor="let metodo of metodosPago" [value]="metodo">
+                               {{ 'PAYMENT_METHODS.' + metodo | translate }}
+                           </option>
+                       </select>
+                        
+                        <button class="btn btn-outline-success" 
+                                (click)="limpiarFiltros()">
+                            <i class="bi bi-x-circle"></i>
+                            {{ 'PAYMENTS.CLEAR' | translate }}
+                        </button>
+                    </div>
+
+                    <div class="overflow-x-auto mb-3">
+                        <table class="tabla">
+                            <thead class="cabeza-tabla">
+                                <tr class="text-success">
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        {{ 'PAYMENTS.LOAN' | translate }}
+                                    </th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        {{ 'PAYMENTS.CLIENT' | translate }}
+                                    </th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        {{ 'PAYMENTS.PAYMENT_DATE' | translate }}
+                                    </th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        {{ 'PAYMENTS.AMOUNT' | translate }}
+                                    </th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        {{ 'PAYMENTS.TYPE' | translate }}
+                                    </th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        {{ 'PAYMENTS.METHOD' | translate }}
+                                    </th>
+                                    <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        {{ 'PAYMENTS.ACTIONS' | translate }}
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody class="tabla_cuerpo text-success">
+                                <tr *ngFor="let pago of pagosAPaginar">
+                                    <td>
+                                        {{ getId(pago) }}
+                                    </td>
+                                    <td>
+                                        <div class="text-sm text-gray-900">
+                                            {{ getNombre(pago)}}
+                                        </div>
+                                        <div class="text-xs text-gray-500">
+                                            {{ getNumerodocumento(pago)}}
+                                        </div>
+                                    </td>
+                                    <td>
+                                        {{ formatDate(pago.fechaPago) }}
+                                    </td>
+                                    <td>
+                                        {{ formatMoney(pago.montoPagado) }}
+                                    </td>
+                                    <td>
+                                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full"
+                                              [ngClass]="{
+                                                'bg-green-100 text-green-800': pago.tipoPago === 'CAPITAL',
+                                                'bg-blue-100 text-blue-800': pago.tipoPago === 'INTERES',
+                                                'bg-red-100 text-red-800': pago.tipoPago === 'MORA'
+                                              }">
+                                            {{ 'PAYMENT_TYPES.' + pago.tipoPago | translate }}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        {{ 'PAYMENT_METHODS.' + pago.metodoPago | translate }}
+                                    </td>
+                                    <td class="text-right">
+                                        <button (click)="verPrestamo( pago )" 
+                                                class="btn btn-sm me-2">
+                                            <i class="bi bi-eye text-success"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                                <!-- Empty State -->
+                                <tr *ngIf="pagosFiltrados.length === 0">
+                                    <td colspan="7" class="px-6 py-4 text-center text-gray-500">
+                                        {{ 'PAYMENTS.NO_PAYMENTS_FOUND' | translate }}
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <div class="text-muted">
+                            Mostrando {{ (currentPage - 1) * pageSize + 1 }} - 
+                            {{ Math.min(currentPage * pageSize, totalItems) }} 
+                            de {{ totalItems }} elementos
+                        </div>
+                        
+                        <nav aria-label="Page navigation">
+                            <ul class="pagination">
+                                <li class="page-item" [class.disabled]="currentPage === 1">
+                                    <button class="page-link" 
+                                            (click)="onPageChange(currentPage - 1)"
+                                            [disabled]="currentPage === 1">
+                                        Anterior
+                                    </button>
+                                </li>
+                                
+                                <li class="page-item" 
+                                    *ngFor="let page of pages"
+                                    [class.active]="page === currentPage">
+                                    <button *ngIf="page !== -1" 
+                                            class="page-link" 
+                                            (click)="onPageChange(page)">
+                                        {{ page }}
+                                    </button>
+                                    <span *ngIf="page === -1" class="page-link">...</span>
+                                </li>
+                                
+                                <li class="page-item" [class.disabled]="currentPage === totalPages">
+                                    <button class="page-link"
+                                            (click)="onPageChange(currentPage + 1)"
+                                            [disabled]="currentPage === totalPages">
+                                        Siguiente
+                                    </button>
+                                </li>
+                            </ul>
+                        </nav>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+</div>

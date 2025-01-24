@@ -1,0 +1,46 @@
+<app-header></app-header>
+<div class="pagina d-flex">
+    <app-sidebar class="lateral container-mt-fluid"></app-sidebar>
+    <div class="cuerpo flex-grow-1">
+        <div class="container">
+            <div class="card mt-4">
+                <div class="card-header bg-success text-white d-flex justify-content-between align-items-center">
+                    <h3 class="mb-0">{{ 'CLIENT_VIEW.CLIENT_DETAILS' | translate }}</h3>
+                    <button class="btn btn-outline-light" (click)="volver()">
+                        <i class="bi bi-arrow-left"></i> {{ 'CLIENT_VIEW.BACK' | translate }}
+                    </button>
+                </div>
+                <div class="card-body">
+                    @if (cliente) {
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h4 class="text-success">{{ 'CLIENT_VIEW.PERSONAL_INFO' | translate }}</h4>
+                                <p><strong>{{ 'CLIENT_VIEW.DOCUMENT' | translate }}:</strong> {{cliente.tipoDocumento}} - {{cliente.numeroDocumento}}</p>
+                                <p><strong>{{ 'CLIENT_VIEW.FIRST_NAME' | translate }}:</strong> {{cliente.nombres}}</p>
+                                <p><strong>{{ 'CLIENT_VIEW.LAST_NAME' | translate }}:</strong> {{cliente.apellidos}}</p>
+                                <p><strong>{{ 'CLIENT_VIEW.BIRTH_DATE' | translate }}:</strong> {{cliente.fechaNacimiento | date:'dd/MM/yyyy'}}</p>
+                            </div>
+                            <div class="col-md-6">
+                                <h4 class="text-success">{{ 'CLIENT_VIEW.CONTACT_INFO' | translate }}</h4>
+                                <p><strong>{{ 'CLIENT_VIEW.ADDRESS' | translate }}:</strong> {{cliente.direccion}}</p>
+                                <p><strong>{{ 'CLIENT_VIEW.CITY' | translate }}:</strong> {{cliente.ciudad}}</p>
+                                <p><strong>{{ 'CLIENT_VIEW.PHONE' | translate }}:</strong> {{cliente.telefono}}</p>
+                                <p><strong>{{ 'CLIENT_VIEW.EMAIL' | translate }}:</strong> {{cliente.email}}</p>
+                            </div>
+                        </div>
+                        <div class="row mt-3">
+                            <div class="col-12">
+                                <h4 class="text-success">{{ 'CLIENT_VIEW.ADDITIONAL_INFO' | translate }}</h4>
+                                <p><strong>{{ 'CLIENT_VIEW.REGISTRATION_DATE' | translate }}:</strong> {{cliente.fechaRegistro | date:'dd/MM/yyyy HH:mm'}}</p>
+                            </div>
+                        </div>
+                    } @else {
+                        <div class="text-center">
+                            <p>{{ 'CLIENT_VIEW.LOADING' | translate }}</p>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

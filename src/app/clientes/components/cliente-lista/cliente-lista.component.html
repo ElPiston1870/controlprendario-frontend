@@ -1,0 +1,135 @@
+<app-header></app-header>
+<div class="pagina d-flex" >
+    <app-sidebar class="lateral container-mt-fluid"></app-sidebar>
+    <div class="cuerpo flex-grow-1">
+        <div class="container">
+            <div class="titulo d-flex align-items-center justify-content-between ">
+                <div class="" >
+                    <h2 class="text-success">{{ 'CLIENTS.TITLE' | translate }}</h2>
+                </div>
+                <div >
+                    <app-cliente-form></app-cliente-form>
+                </div>
+            </div>
+        
+            <div>
+                <div class="">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div class="text-muted">
+                          Mostrando {{ (currentPage - 1) * pageSize + 1 }} -
+                          {{ Math.min(currentPage * pageSize, totalItems) }}
+                          de {{ totalItems }} elementos
+                        </div>
+                      
+                        <nav aria-label="Page navigation">
+                          <ul class="pagination">
+                            <li class="page-item" [class.disabled]="currentPage === 1">
+                              <button class="page-link"
+                                      (click)="onPageChange(currentPage - 1)"
+                                      [disabled]="currentPage === 1">
+                                Anterior
+                              </button>
+                            </li>
+                      
+                            <li class="page-item"
+                                *ngFor="let page of pages"
+                                [class.active]="page === currentPage">
+                              <button *ngIf="page !== -1"
+                                      class="page-link"
+                                      (click)="onPageChange(page)">
+                                {{ page }}
+                              </button>
+                              <span *ngIf="page === -1" class="page-link">...</span>
+                            </li>
+                      
+                            <li class="page-item" [class.disabled]="currentPage === totalPages">
+                              <button class="page-link"
+                                      (click)="onPageChange(currentPage + 1)"
+                                      [disabled]="currentPage === totalPages">
+                                Siguiente
+                              </button>
+                            </li>
+                          </ul>
+                        </nav>
+                    </div>
+                    <div class="d-flex align-items-center justify-content-between buscador_tabla">
+                        <input type="text" 
+                               [(ngModel)]="nombreBusqueda"
+                               placeholder="{{ 'CLIENTS.SEARCH_BY_NAME' | translate }}" 
+                               class="form-control me-2">
+                        
+                        <input type="text" 
+                               [(ngModel)]="documentoBusqueda"
+                               placeholder="{{ 'CLIENTS.SEARCH_BY_ID' | translate }}" 
+                               class="form-control me-2">
+                        
+                        <button class="btn btn-success me-2" 
+                                (click)="buscarClientes()">
+                            <i class="bi bi-search text-light ps-2 pe-2"></i>
+                            {{ 'CLIENTS.SEARCH' | translate }}
+                        </button>
+                        
+                        <button class="btn btn-outline-success" 
+                                (click)="limpiarBusqueda()"
+                                *ngIf="nombreBusqueda || documentoBusqueda">
+                            <i class="bi bi-x-circle"></i>
+                            {{ 'CLIENTS.CLEAR' | translate }}
+                        </button>
+                    </div>
+                    
+                    <div style="background-color: white; height: auto; ">
+                        <table class="tabla rounded">
+                            <thead class="cabeza-tabla">
+                                <tr class="text-success">
+                                    <th>{{ 'CLIENTS.DOCUMENT' | translate }}</th>
+                                    <th>{{ 'CLIENTS.FIRST_NAME' | translate }}</th>
+                                    <th>{{ 'CLIENTS.LAST_NAME' | translate }}</th>
+                                    <th>{{ 'CLIENTS.PHONE' | translate }}</th>
+                                    <th>{{ 'CLIENTS.ACTIONS' | translate }}</th>
+                                </tr>
+                            </thead>
+                            <tbody class="tabla_cuerpo text-success rounded-3">
+                                @for (cliente of clientesAPaginar; track cliente.idCliente) {
+                                    <tr>
+                                        <td>{{cliente.tipoDocumento}} - {{cliente.numeroDocumento}}</td>
+                                        <td>{{cliente.nombres}}</td>
+                                        <td>{{cliente.apellidos}}</td>
+                                        <td>{{cliente.telefono}}</td>
+                                        <td>
+                                            <button class="btn btn-sm me-2" (click)="verCliente(cliente.idCliente!)">
+                                                <svg viewBox="-0.625 -0.625 20 20" xmlns="http://www.w3.org/2000/svg" id="View-1--Streamline-Ultimate" height="20" width="20">
+                                                    <desc>View 1 Streamline Icon: https://streamlinehq.com</desc>
+                                                    <path d="M9.375 4.10234375C6.22578125 4.04921875 2.96875 6.25 0.92109375 8.50390625a1.29921875 1.29921875 0 0 0 0 1.7390625C2.92421875 12.44921875 6.171875 14.70078125 9.375 14.646875000000001c3.2031249999999996 0.05390625 6.4515625 -2.19765625 8.45625 -4.4039062499999995a1.29921875 1.29921875 0 0 0 0 -1.7390625C15.78125 6.25 12.52421875 4.04921875 9.375 4.10234375Z" fill="none" stroke="#093476" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.25"></path>
+                                                    <path d="M12.3046875 9.375A2.9296875 2.9296875 0 1 1 9.375 6.444531250000001 2.9289062500000003 2.9289062500000003 0 0 1 12.3046875 9.375Z" fill="none" stroke="#093476" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.25"></path>
+                                                </svg>
+                                            </button>
+                                            
+                                            <button class="btn text-success btn-sm"
+                                                    data-bs-toggle="modal"
+                                                    [attr.data-bs-target]="'#editarModal' + cliente.idCliente" 
+                                                    (click)="setSelectedCliente(cliente.idCliente!)">
+                                                    <i class="bi bi-pencil"></i>
+                                            </button>
+                                           <app-cliente-editar 
+                                                [clienteId]="cliente.idCliente"
+                                                [modalId]="'editarModal' + cliente.idCliente">
+                                           </app-cliente-editar>
+
+                                            <button class="btn btn-sm" (click)="eliminarCliente(cliente.idCliente!)">
+                                                <i class="bi bi-x-lg text-success"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                } @empty {
+                                    <tr>
+                                        <td colspan="6" class="text-center">{{ 'CLIENTS.NO_CLIENTS' | translate }}</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

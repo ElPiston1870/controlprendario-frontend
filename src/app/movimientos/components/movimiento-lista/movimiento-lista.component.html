@@ -1,0 +1,198 @@
+<app-header></app-header>
+<div class="pagina d-flex">
+    <app-sidebar class="lateral container-mt-fluid"></app-sidebar>
+    <div class=" flex-grow-1">
+        <main class="cuerpo flex-1 overflow-x-hidden overflow-y-auto bg-gray-100">
+            <div class="container mx-auto px-6 py-8">
+                <div class="titulo d-flex flex-wrap align-items-center justify-content-between">
+                    <h2 class="text-success">{{ 'MOVEMENTS.TITLE' | translate }}</h2>
+                    <button 
+                        (click)="navigateToCreate()"
+                        class="btn btn-success hover:bg-blue-600 text-white font-bold py-2 px-4 rounded">
+                        {{ 'MOVEMENTS.NEW_MOVEMENT' | translate }}
+                    </button>
+                    <div class="mx-auto w-100">
+                        <div class="mt-3">
+                            <div class="card bg-light">
+                                <div class="card-body">
+                                    <h5 class="card-title text-success">{{ 'MOVEMENTS.GENERAL_BALANCE' | translate }}</h5>
+                                    <div class=" g-3">
+                                        <div class="col-md-3 w-100">
+                                            <div class="d-flex justify-content-between">
+                                                <span>{{ 'MOVEMENTS.MOVEMENTS' | translate }}:</span>
+                                                <strong>{{ formatMoney(balance.movimientos) }}</strong>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3 w-100">
+                                            <div class="d-flex justify-content-between">
+                                                <span>{{ 'MOVEMENTS.PAYMENTS_RECEIVED' | translate }}:</span>
+                                                <strong class="text-success">{{ formatMoney(balance.interes) }}</strong>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3 w-100">
+                                            <div class="d-flex justify-content-between">
+                                                <span>Suma de prestamos activos:</span>
+                                                <strong class="text-danger">{{ formatMoney(balance.activos) }}</strong>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3 w-100">
+                                            <div class="d-flex justify-content-between">
+                                                <span>{{ 'MOVEMENTS.TOTAL_BALANCE' | translate }}:</span>
+                                                <strong [class.text-success]="balance.total >= 0" 
+                                                    [class.text-danger]="balance.total < 0">
+                                                {{ formatMoney(balance.total) }}
+                                                </strong>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                </div>
+
+                <!-- Loading State -->
+                <div *ngIf="loading" class="flex justify-center items-center py-8">
+                    <div class="spinner-border text-success" role="status">
+                        <span class="visually-hidden">{{ 'MOVEMENTS.LOADING' | translate }}</span>
+                    </div>
+                </div>
+
+                <!-- Error State -->
+                <div *ngIf="error" class="alert alert-danger" role="alert">
+                    {{ error }}
+                </div>
+
+                <!-- Table -->
+                <div *ngIf="!loading && !error" class=" shadow-md rounded-lg overflow-hidden">
+                    <div class="d-flex justify-content-between align-items-center p-3">
+                        <div class="text-muted">
+                            Mostrando {{ (currentPage - 1) * pageSize + 1 }} -
+                            {{ Math.min(currentPage * pageSize, totalItems) }}
+                            de {{ totalItems }} elementos
+                        </div>
+                      
+                        <nav aria-label="Page navigation">
+                            <ul class="pagination">
+                                <li class="page-item" [class.disabled]="currentPage === 1">
+                                    <button class="page-link"
+                                            (click)="onPageChange(currentPage - 1)"
+                                            [disabled]="currentPage === 1">
+                                        Anterior
+                                    </button>
+                                </li>
+                          
+                                <li class="page-item"
+                                    *ngFor="let page of pages"
+                                    [class.active]="page === currentPage">
+                                    <button *ngIf="page !== -1"
+                                            class="page-link"
+                                            (click)="onPageChange(page)">
+                                        {{ page }}
+                                    </button>
+                                    <span *ngIf="page === -1" class="page-link">...</span>
+                                </li>
+                          
+                                <li class="page-item" [class.disabled]="currentPage === totalPages">
+                                    <button class="page-link"
+                                            (click)="onPageChange(currentPage + 1)"
+                                            [disabled]="currentPage === totalPages">
+                                        Siguiente
+                                    </button>
+                                </li>
+                            </ul>
+                        </nav>
+                    </div>
+
+                    <div class="overflow-x-auto">
+                        <table class="tabla">
+                            <thead class="cabeza-tabla">
+                                <tr class="text-success">
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        {{ 'MOVEMENTS.ID' | translate }}
+                                    </th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        {{ 'MOVEMENTS.DATE' | translate }}
+                                    </th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        {{ 'MOVEMENTS.TYPE' | translate }}
+                                    </th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        {{ 'MOVEMENTS.AMOUNT' | translate }}
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody class="tabla_cuerpo text-success">
+                                <tr *ngFor="let movimiento of movimientosAPaginar">
+                                    <td>
+                                        {{ movimiento.idMovimiento }}
+                                    </td>
+                                    <td>
+                                        {{ formatDate(movimiento.fechaMovimiento) }}
+                                    </td>
+                                    <td>
+                                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full"
+                                              [ngClass]="{
+                                                'bg-green-100 text-green-800': movimiento.tipoMovimiento === 'ENTRADA',
+                                                'bg-red-100 text-red-800': movimiento.tipoMovimiento === 'SALIDA'
+                                              }">
+                                            {{ 'MOVEMENT_TYPES.' + movimiento.tipoMovimiento | translate }}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        {{ formatMoney(movimiento.monto) }}
+                                    </td>
+                                </tr>
+                                <!-- Empty State -->
+                                <tr *ngIf="movimientosAPaginar.length === 0">
+                                    <td colspan="4" class="px-6 py-4 text-center text-gray-500">
+                                        {{ 'MOVEMENTS.NO_MOVEMENTS' | translate }}
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center p-3">
+                        <div class="text-muted">
+                            Mostrando {{ (currentPage - 1) * pageSize + 1 }} -
+                            {{ Math.min(currentPage * pageSize, totalItems) }}
+                            de {{ totalItems }} elementos
+                        </div>
+                      
+                        <nav aria-label="Page navigation">
+                            <ul class="pagination">
+                                <li class="page-item" [class.disabled]="currentPage === 1">
+                                    <button class="page-link"
+                                            (click)="onPageChange(currentPage - 1)"
+                                            [disabled]="currentPage === 1">
+                                        Anterior
+                                    </button>
+                                </li>
+                          
+                                <li class="page-item"
+                                    *ngFor="let page of pages"
+                                    [class.active]="page === currentPage">
+                                    <button *ngIf="page !== -1"
+                                            class="page-link"
+                                            (click)="onPageChange(page)">
+                                        {{ page }}
+                                    </button>
+                                    <span *ngIf="page === -1" class="page-link">...</span>
+                                </li>
+                          
+                                <li class="page-item" [class.disabled]="currentPage === totalPages">
+                                    <button class="page-link"
+                                            (click)="onPageChange(currentPage + 1)"
+                                            [disabled]="currentPage === totalPages">
+                                        Siguiente
+                                    </button>
+                                </li>
+                            </ul>
+                        </nav>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+</div>

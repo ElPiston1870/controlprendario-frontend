@@ -1,0 +1,58 @@
+<div>
+  <div class="contenedor">
+    <div class="sidebar" [class.noactive]="isSidebarCollapsed">
+      <div class="nav-sidebar">
+        <div class="menu">
+          <p class="titulo">{{ 'SIDEBAR.MAIN' | translate }}</p>
+          <ul>
+            <li>
+              <a [routerLink]="['/home']">
+                <i class="bi bi-house-door"></i>
+                <span class="text-sidebar">{{ 'SIDEBAR.HOME' | translate }}</span>
+              </a>
+            </li>
+            <li>
+              <a [routerLink]="['/prestamos']">
+                <i class="bi bi-pencil-square"></i>
+                <span class="text-sidebar">{{ 'SIDEBAR.LOANS' | translate }}</span>
+              </a>
+            </li>
+            <li>
+              <a [routerLink]="['/pagos']">
+                <i class="bi bi-cash-coin"></i>
+                <span class="text-sidebar">{{ 'SIDEBAR.PAYMENTS' | translate }}</span>
+              </a>
+            </li>
+            <li>
+              <a [routerLink]="['/clientes']">
+                <i class="bi bi-person-square"></i>
+                <span class="text-sidebar">{{ 'SIDEBAR.CLIENTS' | translate }}</span>
+              </a>
+            </li>
+            <li>
+              <a [routerLink]="['/movimientos']">
+                <i class="bi bi-cash"></i>
+                <span class="text-sidebar">{{ 'SIDEBAR.MOVEMENTS' | translate }}</span>
+              </a>
+            </li>
+          </ul>
+        </div>
+      </div>
+      <div class="nav-sidebar">
+        <div class="menu">
+          <p class="titulo">{{ 'SIDEBAR.SETTINGS' | translate }}</p>
+          <ul>
+            <li>
+              <a [routerLink]="['/configuracion']">
+                <i class="bi bi-gear-fill"></i>
+                <span class="text-sidebar">{{ 'SIDEBAR.CONFIGURATION' | translate }}</span>
+              </a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+ 
+</div>
