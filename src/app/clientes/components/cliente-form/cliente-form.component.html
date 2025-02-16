@@ -61,16 +61,6 @@
                         </div>
                         
                         <div class="opccion col-md-6 mb-3 text-success">
-                          <label class="form-label">{{ 'CLIENT_FORM.BIRTH_DATE' | translate }}:</label>
-                          <input type="date" formControlName="fechaNacimiento" class="text-cyan form-control">
-                        </div>
-                        
-                        <div class="opccion col-md-6 mb-3 text-success">
-                          <label class="form-label">{{ 'CLIENT_FORM.ADDRESS' | translate }}:</label>
-                          <input type="text" formControlName="direccion" class="text-cyan form-control">
-                        </div>
-                        
-                        <div class="opccion col-md-6 mb-3 text-success">
                           <label class="form-label">{{ 'CLIENT_FORM.CITY' | translate }}:</label>
                           <input type="text" formControlName="ciudad" class="text-cyan form-control">
                           @if (clienteForm.get('ciudad')?.errors?.['required'] && 
@@ -85,15 +75,6 @@
                           @if (clienteForm.get('telefono')?.errors?.['required'] && 
                                clienteForm.get('telefono')?.touched) {
                             <div class="text-danger">{{ 'CLIENT_FORM.FIELD_REQUIRED' | translate }}</div>
-                          }
-                        </div>
-                        
-                        <div class="opccion col-md-6 mb-3 text-success">
-                          <label class="form-label">{{ 'CLIENT_FORM.EMAIL' | translate }}:</label>
-                          <input type="email" formControlName="email" class="text-cyan form-control">
-                          @if (clienteForm.get('email')?.errors?.['email'] && 
-                               clienteForm.get('email')?.touched) {
-                            <div class="text-danger">{{ 'CLIENT_FORM.INVALID_EMAIL' | translate }}</div>
                           }
                         </div>
                       </div>
