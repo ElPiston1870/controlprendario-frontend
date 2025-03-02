@@ -34,10 +34,11 @@ import { PrestamoMaquina } from '../models/prestamomaquina.interface';
     }
 
     getPrestamosVencidos(): Observable<Prestamo[]> {
-      return this.http.get<Prestamo[]>(`${this.apiUrl}/vencidos`).pipe(
-        tap(prestamos => console.log('Préstamos vencidos:', prestamos)),
-        catchError(this.handleError)
-      );
+      return this.http.get<Prestamo[]>(`${this.apiUrl}/vencidos`)
+    }
+
+    getMaquinasVencidas(): Observable<Prestamo[]> {
+      return this.http.get<Prestamo[]>(`${this.apiUrl}/maquinas/vencidos`)
     }
   
     getPrestamoById(id: number): Observable<(Prestamo)> {

@@ -44,7 +44,8 @@
                                                   [ngClass]="{
                                                     'bg-success': prestamo.estadoPrestamo === 'ACTIVO',
                                                     'bg-danger': prestamo.estadoPrestamo === 'VENCIDO',
-                                                    'bg-info': prestamo.estadoPrestamo === 'PAGADO'
+                                                    'bg-info': prestamo.estadoPrestamo === 'PAGADO',
+                                                    'bg-bg-danger-emphasis': prestamo.estadoPrestamo === 'PENDIENTE'
                                                   }">
                                                 {{ 'LOAN_STATUS.' + prestamo.estadoPrestamo | translate }}
                                         </span></small>

@@ -1,13 +1,10 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { SidebarComponent } from "../../../pages/components/sidebar/sidebar.component";
 import { HeaderComponent } from "../../../pages/components/header/header.component";
-import { RouterModule, Router } from '@angular/router';
+import { RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { PrestamoService } from '../../../prestamos/services/prestamo.service';
 import { MovimientoService } from '../../../movimientos/services/movimiento.service';
-import { PagoService } from '../../../pagos/services/pago.service';
-import { LogoutButtonComponent } from "../../../login/logout-button/logout-button.component";
-import { UsuariosCrearComponent } from "../../../admin/components/usuarios-crear/usuarios-crear.component";
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { Maquina, Prestamo } from '../../../prestamos/models/prestamo.interface';
 
@@ -22,7 +19,7 @@ interface ResumenNegocio {
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [TranslateModule, CommonModule, SidebarComponent, HeaderComponent, RouterModule, LogoutButtonComponent, UsuariosCrearComponent],
+  imports: [TranslateModule, CommonModule, SidebarComponent, HeaderComponent, RouterModule],
   templateUrl: './home.component.html',
   styleUrl: './home.component.css'
 })
@@ -52,53 +49,49 @@ export class HomeComponent implements OnInit{
 
   private cargarResumen() {
     // Cargar préstamos activos
-    this.prestamoService.getAllPrestamos().subscribe({
+    this.prestamoService.getPrestamosVencidos().subscribe({
       next: (response) => {
-        const prestamos = this.prestamos = response.prestamos;
-        const maquinas = this.maquinas = response.maquinas;
 
         this.loading = false;
         
         // Filtrar préstamos vencidos
-        this.resumen.prestamosVencidos = prestamos
-        .filter(p => {
-          if (!p.fechaVencimiento) return false;
-          const fechaVencimiento = new Date(p.fechaVencimiento);
-          const ahora = new Date();
-          return (fechaVencimiento < ahora && p.estadoPrestamo === 'ACTIVO') || 
-           p.estadoPrestamo === 'VENCIDO';
-        })
+        this.resumen.prestamosVencidos = response
         .sort((a, b) => {
           const fechaA = new Date(a.fechaVencimiento!).getTime();
           const fechaB = new Date(b.fechaVencimiento!).getTime();
           return fechaB - fechaA; // Ordenar por fecha de vencimiento más reciente
         })
-        .slice(0, 3); // Tomar solo los 3 primeros
+        .slice(0, 3); // Tomar solo los 3 primeros        
+      },
+      error: (error) => {
+        this.translateService.get('HOME.ERROR_LOADING_LOANS').subscribe((res: string) => {
+          this.error = res;
+        });
+        this.loading = false;
+        console.error('Error:', error);
+      }
+    });
+    this.prestamoService.getMaquinasVencidas().subscribe({
+      next: (response) => {
+        this.loading = false;
 
-        // Filtrar máquinas vencidos
-        this.resumen.maquinasVencidas = maquinas
-        .filter(p => {
-          if (!p.fechaVencimiento) return false;
-          const fechaVencimiento = new Date(p.fechaVencimiento);
-          const ahora = new Date();
-          return (fechaVencimiento < ahora && p.estadoPrestamo === 'ACTIVO') || 
-           p.estadoPrestamo === 'VENCIDO';
-        })
+        this.resumen.maquinasVencidas = response
         .sort((a, b) => {
           const fechaA = new Date(a.fechaVencimiento!).getTime();
           const fechaB = new Date(b.fechaVencimiento!).getTime();
           return fechaB - fechaA; // Ordenar por fecha de vencimiento más reciente
         })
         .slice(0, 3); // Tomar solo los 3 primeros
-    },
-    error: (error) => {
-      this.translateService.get('HOME.ERROR_LOADING_LOANS').subscribe((res: string) => {
-        this.error = res;
-      });
-      this.loading = false;
-      console.error('Error:', error);
-    }
-  });
+      },
+      error: (error) => {
+        this.translateService.get('HOME.ERROR_LOADING_MACHINES').subscribe((res: string) => {
+          this.error = res;
+        });
+        this.loading = false;
+        console.error('Error:', error);
+      }
+    })
+  
 
     // Cargar balance de movimientos
     this.movimientoService.obtenerBalance().subscribe({

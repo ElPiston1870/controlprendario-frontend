@@ -52,7 +52,7 @@
                                             <span class="badge" 
                                                   [ngClass]="{
                                                     'bg-success': prestamo.estadoPrestamo === 'ACTIVO',
-                                                    'bg-warning': prestamo.estadoPrestamo === 'PENDIENTE',
+                                                    'bg-danger-emphasis': prestamo.estadoPrestamo === 'PENDIENTE',
                                                     'bg-danger': prestamo.estadoPrestamo === 'VENCIDO',
                                                     'bg-info': prestamo.estadoPrestamo === 'PAGADO'
                                                   }">
