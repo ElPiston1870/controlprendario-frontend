@@ -5,12 +5,13 @@ import { Maquina, Prestamo, PrestamoMaquinaResponse, PrestamoConResumen } from '
 import { PagoService } from '../../pagos/services/pago.service';
 import { log } from 'console';
 import { PrestamoMaquina } from '../models/prestamomaquina.interface';
+import { environment } from '../../core/enviroment';
 
 @Injectable({
     providedIn: 'root'
   })
   export class PrestamoService {
-    private apiUrl = 'https://controlprendario.up.railway.app/api/prestamos';
+    private apiUrl =  `${environment.apiUrl}/prestamos`;
     private httpOptions = {
       headers: new HttpHeaders({
         'Content-Type': 'application/json'

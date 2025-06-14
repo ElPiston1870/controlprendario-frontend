@@ -2,12 +2,13 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Prestamo } from '../../prestamos/models/prestamo.interface';
+import { environment } from '../../core/enviroment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class PublicPrestamoService {
-  private apiUrl = `https://controlprendario.up.railway.app/api/public/prestamos`;
+  private apiUrl =  `${environment.apiUrl}/public/prestamos`;
 
   constructor(private http: HttpClient) { }
 

@@ -4,12 +4,14 @@ import { Observable } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
 import { LoginCredentials, LoginResponse } from '../interfaces/auth.interface';
 import { StorageService } from './storage.service';
+import { environment } from '../enviroment';
+
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
-  private apiUrl = 'https://controlprendario.up.railway.app/api/auth';
+  private apiUrl = `${environment.apiUrl}/auth`;
 
   constructor(
     private http: HttpClient,

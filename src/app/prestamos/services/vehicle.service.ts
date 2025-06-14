@@ -2,12 +2,13 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { catchError, Observable, tap, throwError } from 'rxjs';
 import { Vehicle } from '../models/vehicle.model';
+import { environment } from '../../core/enviroment';
 
 @Injectable({
     providedIn: 'root'
 })
 export class VehicleService {
-    private apiUrl = 'https://controlprendario.up.railway.app/api/vehicles';
+    private apiUrl =  `${environment.apiUrl}vehicles`;
 
     constructor(private http: HttpClient) { }
 

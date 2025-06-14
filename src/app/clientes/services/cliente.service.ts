@@ -2,12 +2,13 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Cliente } from '../models/cliente.interface';
+import { environment } from '../../core/enviroment';
 
 @Injectable({
     providedIn: 'root'
 })
 export class ClienteService {
-    private apiUrl = 'https://controlprendario.up.railway.app/api/clientes';
+    private apiUrl =  `${environment.apiUrl}/clientes`;
 
     private httpOptions = {
         headers: new HttpHeaders({

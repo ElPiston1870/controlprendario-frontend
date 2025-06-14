@@ -3,14 +3,15 @@ import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Pago, ResumenPagos, ResumenPrestamo } from '../interfaces/pago.interface';
 import { Prestamo } from '../../prestamos/models/prestamo.interface';
+import { environment } from '../../core/enviroment';
 
 
 @Injectable({
   providedIn: 'root'
 })
 export class PagoService {
-  private apiUrlPrestamos = 'https://controlprendario.up.railway.app/api/pagos';
-  private apiUrlMaquinas = 'https://controlprendario.up.railway.app/api/pagos-maquinas';
+  private apiUrlPrestamos =  `${environment.apiUrl}/pagos`;
+  private apiUrlMaquinas =  `${environment.apiUrl}/pagos-maquinas`;
 
   private httpOptions = {
     headers: new HttpHeaders({

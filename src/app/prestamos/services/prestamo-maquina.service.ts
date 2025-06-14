@@ -2,12 +2,13 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse, HttpHeaders, HttpParams } from '@angular/common/http';
 import { catchError, forkJoin, map, mergeMap, Observable, tap, throwError } from 'rxjs';
 import { PrestamoMaquina } from '../models/prestamomaquina.interface';
+import { environment } from '../../core/enviroment';
 
 @Injectable({
     providedIn: 'root'
 })
 export class PrestamoMaquinaService {
-    private apiUrl = 'https://controlprendario.up.railway.app/api/prestamos-maquinas';
+    private apiUrl =  `${environment.apiUrl}/prestamos-maquinas`;
     private httpOptions = {
         headers: new HttpHeaders({
           'Content-Type': 'application/json',

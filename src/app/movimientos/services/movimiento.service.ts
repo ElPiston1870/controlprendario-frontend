@@ -2,6 +2,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { environment } from '../../core/enviroment';
 
 export interface Movimiento {
   idMovimiento?: number;
@@ -23,7 +24,7 @@ export interface Balance {
   providedIn: 'root'
 })
 export class MovimientoService {
-  private apiUrl = 'https://controlprendario.up.railway.app/api/movimientos';
+  private apiUrl =  `${environment.apiUrl}/movimientos`;
 
   private httpOptions = {
     headers: new HttpHeaders({
