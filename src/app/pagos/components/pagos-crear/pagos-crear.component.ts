@@ -7,8 +7,9 @@ import { PagoService } from '../../services/pago.service';
 import { PrestamoService } from '../../../prestamos/services/prestamo.service';
 import { Router } from '@angular/router';
 import { debounceTime, distinctUntilChanged, switchMap } from 'rxjs';
-import { PrestamoSeleccionado, ResumenPrestamo  } from '../../interfaces/pago.interface';
+import { PrestamoSeleccionado} from '../../interfaces/pago.interface';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { Prestamo } from '../../../prestamos/models/prestamo.interface';
 
 @Component({
   selector: 'app-pagos-crear',
@@ -90,16 +91,16 @@ export class PagosCrearComponent implements OnInit{
     
     this.prestamosEncontrados = [];
 
-    this.pagoService.obtenerResumenPagos('vehiculos',prestamo.idPrestamo).subscribe({
-      next: (resumen: ResumenPrestamo) => {
+    this.prestamoService.getPrestamoById(prestamo.idPrestamo).subscribe({
+      next: (resumen: Prestamo) => {
         this.prestamoSeleccionado = {
           ...prestamo,
           capitalPagado: resumen.capitalPagado,
           interesPagado: resumen.interesPagado,
           capitalPendiente: resumen.capitalPendiente,
           interesPendiente: resumen.interesPendiente,
-          totalPagado: resumen.capitalPagado + resumen.interesPagado,
-          totalPendiente: resumen.capitalPendiente + resumen.interesPendiente
+          totalPagado: resumen.capitalPagado! + resumen.interesPagado!, 
+          totalPendiente: resumen.capitalPendiente! + resumen.interesPendiente!
         };
       },
       error: (error) => {

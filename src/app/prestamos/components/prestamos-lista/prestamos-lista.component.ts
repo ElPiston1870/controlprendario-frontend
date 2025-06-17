@@ -189,21 +189,19 @@ export class PrestamosListaComponent implements OnInit {
         if (this.selectTable === 'vehiculos') {
           this.prestamos = prestamosConResumen.map(item => ({
             ...item.prestamo,
-            resumenPagos: item.resumen,
             totalPagar: item.prestamo.montoPrestamo,
-            totalAbonado: (item.resumen.capitalPagado || 0) + (item.resumen.interesPagado || 0),
-            saldoPendiente: item.prestamo.montoPrestamo - ((item.resumen.capitalPagado || 0)) + (item.resumen.interesPendiente)
+            totalAbonado: (item.prestamo.capitalPagado || 0) + (item.prestamo.interesPagado || 0),
+            saldoPendiente: item.prestamo.montoPrestamo - ((item.prestamo.capitalPagado || 0)) + (item.prestamo.interesPendiente || 0),
             
           }));
           this.prestamosFiltrados = this.prestamos;
         } else if (this.selectTable === 'maquinas') {
             this.maquinas = prestamosConResumen.map(item =>({
               ...item.maquina,
-              resumenPagos: item.resumen,
               totalPagar: item.maquina.montoPrestamo,
-              totalAbonado: (item.resumen.capitalPagado || 0) + (item.resumen.interesPagado || 0),
+              totalAbonado: (item.maquina.capitalPagado || 0) + (item.maquina.interesPagado || 0),
               saldoPendiente: item.maquina.montoPrestamo - 
-                             ((item.resumen.capitalPagado || 0) ) + (item.resumen.interesPendiente)
+                             ((item.maquina.capitalPagado || 0) ) + (item.maquina.interesPendiente || 0)
             }));
             this.prestamosFiltrados = this.maquinas;
         }

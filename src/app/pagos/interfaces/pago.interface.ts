@@ -32,16 +32,7 @@ export interface ResumenPagos {
   mora: number;
 }
 
-export interface ResumenPrestamo {
-  capitalTotal: number;
-  interesTotal: number;
-  capitalPagado: number;
-  interesPagado: number;
-  capitalPendiente: number;
-  interesPendiente: number;
-}
 
-export type PagoGeneral = ResumenPrestamo ;
 
 export interface PrestamoSeleccionado {
   idPrestamo: number;

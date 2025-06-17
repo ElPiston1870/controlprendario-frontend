@@ -43,16 +43,12 @@ import { environment } from '../../core/enviroment';
     }
   
     getPrestamoById(id: number): Observable<(Prestamo)> {
-      return this.http.get<Prestamo>(`${this.apiUrl}/${id}`).pipe(
-          tap(prestamo => console.log('Préstamo obtenido:', prestamo)),
-          catchError(this.handleError)
-      );
+      return this.http.get<Prestamo>(`${this.apiUrl}/${id}`)
     }
+
     getPrestamoPorId(id: number): Observable<(Maquina)> {
-      return this.http.get<Maquina>(`${this.apiUrl}/maquina/${id}`).pipe(
-          tap(prestamo => console.log('Préstamo obtenido:', prestamo)),
-          catchError(this.handleError)
-      );
+      return this.http.get<Maquina>(`${this.apiUrl}/maquina/${id}`)
+      
     }
   
     createPrestamo(prestamo: any): Observable<Prestamo> {
@@ -150,11 +146,8 @@ import { environment } from '../../core/enviroment';
             const observables = response.prestamos.map(prestamo =>
             forkJoin({
               prestamo: Promise.resolve(prestamo),
-              resumen: this.pagoService.obtenerResumenPagos(tableName, prestamo.idPrestamo!),
               maquina: Promise.resolve({} as Maquina)
-            }).pipe(
-              tap(observable => console.log('Observable:', observable))
-            )
+            })
             );
           
           return forkJoin(observables);
@@ -167,11 +160,8 @@ import { environment } from '../../core/enviroment';
           const observables = response.maquinas.map(maquina =>
             forkJoin({
               maquina: Promise.resolve(maquina),
-              resumen: this.pagoService.obtenerResumenPagos(tableName, maquina.idPrestamoMaquina!),
               prestamo: Promise.resolve({} as Prestamo)
-            }).pipe(
-              tap(observable => console.log('Observable:', observable))
-            )
+            })
           );
           return forkJoin(observables);
         }),

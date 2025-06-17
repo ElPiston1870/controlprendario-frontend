@@ -1,8 +1,7 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { Pago, ResumenPagos, ResumenPrestamo } from '../interfaces/pago.interface';
-import { Prestamo } from '../../prestamos/models/prestamo.interface';
+import { Pago } from '../interfaces/pago.interface';
 import { environment } from '../../core/enviroment';
 
 
@@ -31,26 +30,6 @@ export class PagoService {
       console.log('Pago :', pago);
       return this.http.post<Pago>(this.apiUrlMaquinas, pago);
     }
-  }
-
-  obtenerPagosPorPrestamo(idPrestamo: number): Observable<Pago[]> {
-    return this.http.get<Pago[]>(`${this.apiUrlPrestamos}/prestamo/${idPrestamo}`);
-  }
-
-  obtenerResumenPagos(tableName: string, idPrestamo: number): Observable<ResumenPrestamo> {
-    if (tableName === 'vehiculos') {
-      const response = idPrestamo;
-      return this.http.get<ResumenPrestamo>(`${this.apiUrlPrestamos}/prestamo/${idPrestamo}/resumen`);
-    } else {
-      const response = idPrestamo;
-    return this.http.get<ResumenPrestamo>(`${this.apiUrlMaquinas}/prestamo/${idPrestamo}/resumen`);
-    }
-  }
-
-  buscarPagosPorCliente(termino: string): Observable<Pago[]> {
-    return this.http.get<Pago[]>(`${this.apiUrlPrestamos}/buscar`, {
-      params: { termino }
-    });
   }
   
 

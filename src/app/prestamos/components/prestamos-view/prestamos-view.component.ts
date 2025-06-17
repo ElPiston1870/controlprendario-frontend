@@ -50,11 +50,6 @@ export class PrestamosViewComponent implements OnInit{
     this.prestamoService.getPrestamoById(id).subscribe({
       next: (prestamo) => {
         this.prestamo = prestamo;
-        this.pagoService.obtenerResumenPagos('vehiculos', prestamo.idPrestamo!).subscribe(resumen => {
-          this.resumen = resumen; // Guardar el valor resuelto
-          this.prestamo!.resumenPagos = this.resumen;
-          console.log('Resumen:', this.resumen); // Aquí se imprimen los datos reales
-        });
         this.loading = false;
       },
       error: (error) => {
@@ -69,7 +64,7 @@ export class PrestamosViewComponent implements OnInit{
 
   calcularTotal(): number {
     if (!this.prestamo) return 0;
-    return this.prestamo.resumenPagos?.capitalPendiente! + (this.prestamo.resumenPagos?.interesPendiente!);
+    return this.prestamo.capitalPendiente! + (this.prestamo.interesPendiente!);
   }
 
   formatDate(date: string | undefined): string {
