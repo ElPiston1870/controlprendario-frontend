@@ -83,33 +83,15 @@ export class PagosCrearMaquinaComponent implements OnInit{
   }
 
   seleccionarPrestamo(prestamo: any): void {
-    this.prestamoSeleccionado = null;
-    console.log(prestamo);
+    this.prestamoSeleccionado = prestamo;
+    this.prestamoSeleccionado = {...prestamo, totalPagado: prestamo.capitalPagado! + prestamo.interesPagado!, totalPendiente: prestamo.capitalPendiente! + prestamo.interesPendiente!}
     this.pagoForm.patchValue({
       idPrestamoMaquina: prestamo.idPrestamoMaquina,
       busquedaPrestamo: `${prestamo.cliente.nombres} ${prestamo.cliente.apellidos}`
     });
     this.prestamosEncontrados = [];
 
-    this.prestamoService.getPrestamoById(prestamo.idPrestamoMaquina).subscribe({
-      next: (resumen: Prestamo) => {
-        this.prestamoSeleccionado = {
-          ...prestamo,
-          capitalPagado: resumen.capitalPagado,
-          interesPagado: resumen.interesPagado,
-          capitalPendiente: resumen.capitalPendiente,
-          interesPendiente: resumen.interesPendiente,
-          totalPagado: resumen.capitalPagado! + resumen.interesPagado!,
-          totalPendiente: resumen.capitalPendiente! + resumen.interesPendiente!
-        };
-      },
-      error: (error) => {
-        this.translateService.get('PAYMENT_CREATE.ERROR_LOADING_SUMMARY').subscribe((res: string) => {
-          this.error = res;
-        });
-        console.error('Error:', error);
-      }
-    });
+    
   }
 
   onSubmit(): void {
