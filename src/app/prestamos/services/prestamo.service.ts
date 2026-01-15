@@ -3,9 +3,9 @@ import { HttpClient, HttpErrorResponse, HttpHeaders, HttpParams } from '@angular
 import { catchError, forkJoin, map, mergeMap, Observable, of, tap, throwError } from 'rxjs';
 import { Maquina, Prestamo, PrestamoMaquinaResponse, PrestamoConResumen } from '../models/prestamo.interface';
 import { PagoService } from '../../pagos/services/pago.service';
-import { log } from 'console';
 import { PrestamoMaquina } from '../models/prestamomaquina.interface';
 import { environment } from '../../core/enviroment';
+import { LoggerService } from '../../core/services/logger.service';
 
 @Injectable({
     providedIn: 'root'
@@ -20,12 +20,13 @@ import { environment } from '../../core/enviroment';
   
     constructor(
       private http: HttpClient,
-      private pagoService: PagoService
+      private pagoService: PagoService,
+      private logger: LoggerService
     ) {}
   
     getPrestamos(tableName: string): Observable<(Prestamo | Maquina)[]> {
       return this.http.get<(Prestamo | Maquina)[]>(`${this.apiUrl}/${tableName}`).pipe(
-          tap(prestamos => console.log('Préstamos obtenidos:', prestamos)),
+          tap(prestamos => this.logger.log('Préstamos obtenidos:', prestamos)),
           catchError(this.handleError)
       );
     }
@@ -53,7 +54,7 @@ import { environment } from '../../core/enviroment';
   
     createPrestamo(prestamo: any): Observable<Prestamo> {
       return this.http.post<Prestamo>(this.apiUrl, prestamo).pipe(
-        tap(response => console.log('Préstamo creado:', response)),
+        tap(response => this.logger.log('Préstamo creado:', response)),
         catchError(this.handleError)
       );
     }
@@ -61,12 +62,12 @@ import { environment } from '../../core/enviroment';
     ultimoId(tableName:string): Observable<any>{
       if(tableName === 'vehiculo'){
         return this.http.get<any>(`${this.apiUrl}/ultimo-id`).pipe(
-          tap(response => console.log('Id obtenido:', response)),
+          tap(response => this.logger.log('Id obtenido:', response)),
           catchError(this.handleError)
         );
       }else{
         return this.http.get<any>(`${this.apiUrl}/ultimo-id/maquina`).pipe(
-          tap(response => console.log('Id obtenido:', response)),
+          tap(response => this.logger.log('Id obtenido:', response)),
           catchError(this.handleError)
         );
       }
@@ -74,14 +75,14 @@ import { environment } from '../../core/enviroment';
   
     updatePrestamo(id: number, prestamo: any): Observable<Prestamo> {
       return this.http.put<Prestamo>(`${this.apiUrl}/${id}`, prestamo).pipe(
-          tap(response => console.log('Préstamo actualizado:', response)),
+          tap(response => this.logger.log('Préstamo actualizado:', response)),
           catchError(this.handleError)
       );
     }
 
     actualizarPrestamo(id: number, prestamo: any): Observable<Maquina> {
       return this.http.put<Maquina>(`${this.apiUrl}/maquina/${id}`, prestamo).pipe(
-          tap(response => console.log('Préstamo actualizado:', response)),
+          tap(response => this.logger.log('Préstamo actualizado:', response)),
           catchError(this.handleError)
       );
     }
@@ -89,19 +90,19 @@ import { environment } from '../../core/enviroment';
     deletePrestamo(tableName: string,id: number): Observable<void> {
       if(tableName === 'vehiculos'){
         return this.http.delete<void>(`${this.apiUrl}/${id}`).pipe(
-            tap(() => console.log('Préstamo eliminado:', id)),
+            tap(() => this.logger.log('Préstamo eliminado:', id)),
             catchError(this.handleError)
         );
       }else{
         return this.http.delete<void>(`${this.apiUrl}/maquina/${id}`).pipe(
-          tap(() => console.log('Préstamo eliminado:', id)),
+          tap(() => this.logger.log('Préstamo eliminado:', id)),
           catchError(this.handleError)
         );
       }
     }
 
     private handleError(error: HttpErrorResponse) {
-      console.error('An error occurred:', error);
+      this.logger.error('An error occurred:', error);
       let errorMessage = 'Ocurrió un error al procesar la solicitud.';
       
       if (error.error instanceof ErrorEvent) {

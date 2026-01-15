@@ -3,6 +3,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Pago } from '../interfaces/pago.interface';
 import { environment } from '../../core/enviroment';
+import { LoggerService } from '../../core/services/logger.service';
 
 
 @Injectable({
@@ -20,14 +21,17 @@ export class PagoService {
     withCredentials: true
   };
 
-  constructor(private http: HttpClient) { }
+  constructor(
+    private http: HttpClient,
+    private logger: LoggerService
+  ) { }
 
   crearPago(tableName: string ,pago: Pago): Observable<Pago> {
     if (tableName === 'vehiculos') {
-      console.log('Pago :', pago);
+      this.logger.log('Pago :', pago);
       return this.http.post<Pago>(this.apiUrlPrestamos, pago);
     } else {
-      console.log('Pago :', pago);
+      this.logger.log('Pago :', pago);
       return this.http.post<Pago>(this.apiUrlMaquinas, pago);
     }
   }

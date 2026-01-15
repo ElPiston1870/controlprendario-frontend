@@ -9,6 +9,7 @@ import { ClienteFormComponent } from "../cliente-form/cliente-form.component";
 import { ClienteEditarComponent } from "../cliente-editar/cliente-editar.component";
 import { FormsModule } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { LoggerService } from '../../../core/services/logger.service';
 
 @Component({
   selector: 'app-cliente-lista',
@@ -21,6 +22,7 @@ export class ClienteListaComponent implements OnInit {
   private clienteService = inject(ClienteService);
   private router = inject(Router);
   private translateService = inject(TranslateService);
+  private logger = inject(LoggerService);
 
   clientes: Cliente[] = [];
   selectedClienteId?: number;
@@ -46,10 +48,10 @@ export class ClienteListaComponent implements OnInit {
       next: (data) => {
         this.clientes = data;
         this.totalItems = this.clientes.length;
-        this.currentPage = 1; // Reset a la primera página cuando se aplican filtros
+        this.currentPage = 1; 
         this.updatePaginatedItems();
       },
-      error: (error) => console.error('Error al cargar clientes', error)
+      error: (error) => this.logger.error('Error al cargar clientes', error)
     });
   }
 
@@ -67,11 +69,10 @@ export class ClienteListaComponent implements OnInit {
         this.clienteService.eliminarCliente(id).subscribe({
           next: () => {
             this.cargarClientes();
-            // Aquí podrías mostrar un mensaje de éxito
           },
           error: (error) => {
-            console.error('Error al eliminar cliente', error);
-            // Aquí podrías mostrar un mensaje de error
+            this.logger.error('Error al eliminar cliente', error);
+            
           }
         });
       }
@@ -93,7 +94,7 @@ export class ClienteListaComponent implements OnInit {
         next: (data) => {
           this.clientes = data;
         },
-        error: (error) => console.error('Error en la búsqueda', error)
+        error: (error) => this.logger.error('Error en la búsqueda', error)
       });
   }
 

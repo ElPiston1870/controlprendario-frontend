@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
 import { LoginCredentials, LoginResponse } from '../interfaces/auth.interface';
 import { StorageService } from './storage.service';
+import { LoggerService } from './logger.service';
 import { environment } from '../enviroment';
 
 
@@ -15,14 +16,15 @@ export class AuthService {
 
   constructor(
     private http: HttpClient,
-    private storageService: StorageService
+    private storageService: StorageService,
+    private logger: LoggerService
   ) {}
 
   login(credentials: LoginCredentials): Observable<LoginResponse> {
     return this.http.post<LoginResponse>(`${this.apiUrl}/login`, credentials)
       .pipe(
         tap(response => {
-          console.log('Respuesta del servidor:', response);
+          this.logger.log('Respuesta del servidor:', response);
           if (response && response.token) {
             this.storageService.setItem('token', response.token);
             this.storageService.setItem('roles', JSON.stringify(response.roles));
@@ -33,7 +35,7 @@ export class AuthService {
           }
         }),
         catchError(error => {
-          console.error('Error en login:', error);
+          this.logger.error('Error en login:', error);
           throw error;
         })
       );

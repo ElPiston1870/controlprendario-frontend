@@ -3,6 +3,7 @@ import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { catchError, Observable, tap, throwError } from 'rxjs';
 import { Vehicle } from '../models/vehicle.model';
 import { environment } from '../../core/enviroment';
+import { LoggerService } from '../../core/services/logger.service';
 
 @Injectable({
     providedIn: 'root'
@@ -10,28 +11,31 @@ import { environment } from '../../core/enviroment';
 export class VehicleService {
     private apiUrl =  `${environment.apiUrl}vehicles`;
 
-    constructor(private http: HttpClient) { }
+    constructor(
+        private http: HttpClient,
+        private logger: LoggerService
+    ) { }
 
     
     createVehicle(vehicle: Vehicle): Observable<Vehicle> {
-        console.log('Sending to backend:', vehicle);
+        this.logger.log('Sending to backend:', vehicle);
         return this.http.post<Vehicle>(this.apiUrl, vehicle)
             .pipe(
                 tap(response => {
                     if (response.placa === vehicle.placa) {
-                        console.log('Se encontró un vehículo existente con la misma placa. Verificando cambios...');
+                        this.logger.log('Se encontró un vehículo existente con la misma placa. Verificando cambios...');
                         
                         const hasChanges = this.checkVehicleChanges(vehicle, response);
 
                         if (hasChanges) {
-                            console.log('Se actualizaron los datos del vehículo existente');
+                            this.logger.log('Se actualizaron los datos del vehículo existente');
                         } else {
-                            console.log('No se requirieron cambios en el vehículo existente');
+                            this.logger.log('No se requirieron cambios en el vehículo existente');
                         }
                     } else {
-                        console.log('Se creó un nuevo vehículo');
+                        this.logger.log('Se creó un nuevo vehículo');
                     }
-                    console.log('Backend response:', response);
+                    this.logger.log('Backend response:', response);
                 }),
                 catchError(this.handleError)
             );
@@ -42,51 +46,51 @@ export class VehicleService {
 
         // Verificar cada campo individualmente
         if (vehicle.tipoVehiculo !== response.tipoVehiculo) {
-            console.log(`Tipo de vehículo cambió de ${response.tipoVehiculo} a ${vehicle.tipoVehiculo}`);
+            this.logger.log(`Tipo de vehículo cambió de ${response.tipoVehiculo} a ${vehicle.tipoVehiculo}`);
             hasChanges = true;
         }
         if (vehicle.marca !== response.marca) {
-            console.log(`Marca cambió de ${response.marca} a ${vehicle.marca}`);
+            this.logger.log(`Marca cambió de ${response.marca} a ${vehicle.marca}`);
             hasChanges = true;
         }
         if (vehicle.linea !== response.linea) {
-            console.log(`Línea cambió de ${response.linea} a ${vehicle.linea}`);
+            this.logger.log(`Línea cambió de ${response.linea} a ${vehicle.linea}`);
             hasChanges = true;
         }
         if (vehicle.modelo !== response.modelo) {
-            console.log(`Modelo cambió de ${response.modelo} a ${vehicle.modelo}`);
+            this.logger.log(`Modelo cambió de ${response.modelo} a ${vehicle.modelo}`);
             hasChanges = true;
         }
         if (vehicle.cilindraje !== response.cilindraje) {
-            console.log(`Cilindraje cambió de ${response.cilindraje} a ${vehicle.cilindraje}`);
+            this.logger.log(`Cilindraje cambió de ${response.cilindraje} a ${vehicle.cilindraje}`);
             hasChanges = true;
         }
         if (vehicle.color !== response.color) {
-            console.log(`Color cambió de ${response.color} a ${vehicle.color}`);
+            this.logger.log(`Color cambió de ${response.color} a ${vehicle.color}`);
             hasChanges = true;
         }
         if (vehicle.numeroMotor !== response.numeroMotor) {
-            console.log(`Número de motor cambió de ${response.numeroMotor} a ${vehicle.numeroMotor}`);
+            this.logger.log(`Número de motor cambió de ${response.numeroMotor} a ${vehicle.numeroMotor}`);
             hasChanges = true;
         }
         if (vehicle.numeroChasis !== response.numeroChasis) {
-            console.log(`Número de chasis cambió de ${response.numeroChasis} a ${vehicle.numeroChasis}`);
+            this.logger.log(`Número de chasis cambió de ${response.numeroChasis} a ${vehicle.numeroChasis}`);
             hasChanges = true;
         }
         if (vehicle.sitioMatricula !== response.sitioMatricula) {
-            console.log(`Sitio de matrícula cambió de ${response.sitioMatricula} a ${vehicle.sitioMatricula}`);
+            this.logger.log(`Sitio de matrícula cambió de ${response.sitioMatricula} a ${vehicle.sitioMatricula}`);
             hasChanges = true;
         }
         if (!this.areDatesEqual(vehicle.fechaMatricula, response.fechaMatricula)) {
-            console.log(`Fecha de matrícula cambió de ${response.fechaMatricula} a ${vehicle.fechaMatricula}`);
+            this.logger.log(`Fecha de matrícula cambió de ${response.fechaMatricula} a ${vehicle.fechaMatricula}`);
             hasChanges = true;
         }
         if (vehicle.propietario !== response.propietario) {
-            console.log(`Propietario cambió de ${response.propietario} a ${vehicle.propietario}`);
+            this.logger.log(`Propietario cambió de ${response.propietario} a ${vehicle.propietario}`);
             hasChanges = true;
         }
         if (vehicle.numeroDocumentoPropietario !== response.numeroDocumentoPropietario) {
-            console.log(`Número de documento del propietario cambió de ${response.numeroDocumentoPropietario} a ${vehicle.numeroDocumentoPropietario}`);
+            this.logger.log(`Número de documento del propietario cambió de ${response.numeroDocumentoPropietario} a ${vehicle.numeroDocumentoPropietario}`);
             hasChanges = true;
         }
 
@@ -113,7 +117,7 @@ export class VehicleService {
 
      private handleError(error: HttpErrorResponse)
     {
-        console.error('An error occurred:', error);
+        this.logger.error('An error occurred:', error);
         let errorMessage = 'Ocurrió un error al procesar la solicitud.';
         
         if (error.error instanceof ErrorEvent) {
@@ -133,7 +137,7 @@ export class VehicleService {
     getVehicleById(id: number): Observable<Vehicle> {
         return this.http.get<Vehicle>(`${this.apiUrl}/${id}`)
             .pipe(
-                tap(vehicle => console.log('Fetched vehicle:', vehicle)),
+                tap(vehicle => this.logger.log('Fetched vehicle:', vehicle)),
                 catchError(this.handleError)
             );
     }
@@ -141,7 +145,7 @@ export class VehicleService {
     deleteVehicle(id: number): Observable<void> {
         return this.http.delete<void>(`${this.apiUrl}/${id}`)
             .pipe(
-                tap(() => console.log('Deleted vehicle id:', id)),
+                tap(() => this.logger.log('Deleted vehicle id:', id)),
                 catchError(this.handleError)
             );
     }
@@ -149,7 +153,7 @@ export class VehicleService {
     updateVehicle(id: number, vehicle: Vehicle): Observable<Vehicle> {
         return this.http.put<Vehicle>(`${this.apiUrl}/${id}`, vehicle)
             .pipe(
-                tap(response => console.log('Updated vehicle:', response)),
+                tap(response => this.logger.log('Updated vehicle:', response)),
                 catchError(this.handleError)
             );
     }

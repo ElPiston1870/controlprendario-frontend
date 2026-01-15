@@ -3,6 +3,7 @@ import { HttpClient, HttpErrorResponse, HttpHeaders, HttpParams } from '@angular
 import { catchError, forkJoin, map, mergeMap, Observable, tap, throwError } from 'rxjs';
 import { PrestamoMaquina } from '../models/prestamomaquina.interface';
 import { environment } from '../../core/enviroment';
+import { LoggerService } from '../../core/services/logger.service';
 
 @Injectable({
     providedIn: 'root'
@@ -18,13 +19,14 @@ export class PrestamoMaquinaService {
       };
 
     constructor(
-        private http: HttpClient
+        private http: HttpClient,
+        private logger: LoggerService
     ) { }
 
     // Obtener todos los préstamos de máquinas
     getPrestamosMaquina(): Observable<PrestamoMaquina[]> {
         return this.http.get<PrestamoMaquina[]>(this.apiUrl).pipe(
-            tap(prestamos => console.log('Préstamos de máquinas obtenidos:', prestamos)),
+            tap(prestamos => this.logger.log('Préstamos de máquinas obtenidos:', prestamos)),
             catchError(this.handleError)
         );
     }
@@ -32,7 +34,7 @@ export class PrestamoMaquinaService {
     // Obtener préstamos vencidos
     getPrestamosMaquinaVencidos(): Observable<PrestamoMaquina[]> {
         return this.http.get<PrestamoMaquina[]>(`${this.apiUrl}/vencidos`).pipe(
-            tap(prestamos => console.log('Préstamos de máquinas vencidos:', prestamos)),
+            tap(prestamos => this.logger.log('Préstamos de máquinas vencidos:', prestamos)),
             catchError(this.handleError)
         );
     }
@@ -40,7 +42,7 @@ export class PrestamoMaquinaService {
     // Obtener un préstamo por ID
     getPrestamoMaquinaById(id: number): Observable<PrestamoMaquina> {
         return this.http.get<PrestamoMaquina>(`${this.apiUrl}/${id}`).pipe(
-            tap(prestamo => console.log('Préstamo de máquina obtenido:', prestamo)),
+            tap(prestamo => this.logger.log('Préstamo de máquina obtenido:', prestamo)),
             catchError(this.handleError)
         );
     }
@@ -48,7 +50,7 @@ export class PrestamoMaquinaService {
     // Crear nuevo préstamo
     createPrestamoMaquina(prestamo: PrestamoMaquina): Observable<PrestamoMaquina> {
         return this.http.post<PrestamoMaquina>(this.apiUrl, prestamo).pipe(
-            tap(response => console.log('Préstamo de máquina creado:', response)),
+            tap(response => this.logger.log('Préstamo de máquina creado:', response)),
             catchError(this.handleError)
         );
     }
@@ -56,7 +58,7 @@ export class PrestamoMaquinaService {
     // Actualizar préstamo existente
     updatePrestamoMaquina(id: number, prestamo: PrestamoMaquina): Observable<PrestamoMaquina> {
         return this.http.put<PrestamoMaquina>(`${this.apiUrl}/${id}`, prestamo).pipe(
-            tap(response => console.log('Préstamo de máquina actualizado:', response)),
+            tap(response => this.logger.log('Préstamo de máquina actualizado:', response)),
             catchError(this.handleError)
         );
     }
@@ -64,7 +66,7 @@ export class PrestamoMaquinaService {
     // Eliminar préstamo
     deletePrestamoMaquina(id: number): Observable<void> {
         return this.http.delete<void>(`${this.apiUrl}/${id}`).pipe(
-            tap(() => console.log('Préstamo de máquina eliminado:', id)),
+            tap(() => this.logger.log('Préstamo de máquina eliminado:', id)),
             catchError(this.handleError)
         );
     }
@@ -84,7 +86,7 @@ export class PrestamoMaquinaService {
     }
 
     private handleError(error: HttpErrorResponse) {
-        console.error('An error occurred:', error);
+        this.logger.error('An error occurred:', error);
         let errorMessage = 'Ocurrió un error al procesar la solicitud.';
 
         if (error.error instanceof ErrorEvent) {
