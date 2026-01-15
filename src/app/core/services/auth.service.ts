@@ -62,19 +62,40 @@ export class AuthService {
     return this.storageService.getItem('token');
   }
 
+  /**
+   * Verifica si el usuario está autenticado con un token válido
+   * Si el token está expirado, limpia la sesión automáticamente
+   */
   isLoggedIn(): boolean {
     const token = this.storageService.getItem('token');
     if (!token) return false;
 
     try {
       const tokenParts = token.split('.');
-      if (tokenParts.length !== 3) return false;
+      if (tokenParts.length !== 3) {
+        this.logout(); // Token malformado - limpiar
+        return false;
+      }
 
       const payload = JSON.parse(atob(tokenParts[1]));
-      const expiration = payload.exp * 1000;
       
-      return Date.now() < expiration;
+      // Validar que el payload tenga la estructura esperada
+      if (!payload.exp || typeof payload.exp !== 'number') {
+        this.logout(); // Token sin expiración - limpiar
+        return false;
+      }
+
+      const expiration = payload.exp * 1000;
+      const isValid = Date.now() < expiration;
+      
+      // Si el token expiró, limpiar automáticamente
+      if (!isValid) {
+        this.logout();
+      }
+      
+      return isValid;
     } catch {
+      this.logout(); // Error al decodificar - limpiar
       return false;
     }
   }
