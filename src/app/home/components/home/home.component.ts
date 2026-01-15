@@ -60,8 +60,7 @@ export class HomeComponent implements OnInit{
           const fechaA = new Date(a.fechaVencimiento!).getTime();
           const fechaB = new Date(b.fechaVencimiento!).getTime();
           return fechaB - fechaA; // Ordenar por fecha de vencimiento más reciente
-        })
-        .slice(0, 3); // Tomar solo los 3 primeros        
+        });        
       },
       error: (error) => {
         this.translateService.get('HOME.ERROR_LOADING_LOANS').subscribe((res: string) => {
@@ -80,8 +79,7 @@ export class HomeComponent implements OnInit{
           const fechaA = new Date(a.fechaVencimiento!).getTime();
           const fechaB = new Date(b.fechaVencimiento!).getTime();
           return fechaB - fechaA; // Ordenar por fecha de vencimiento más reciente
-        })
-        .slice(0, 3); // Tomar solo los 3 primeros
+        });
       },
       error: (error) => {
         this.translateService.get('HOME.ERROR_LOADING_MACHINES').subscribe((res: string) => {

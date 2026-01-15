@@ -1,13 +1,9 @@
 <app-header></app-header>
 <div class="pagina d-flex">
     <app-sidebar class="lateral container-mt-fluid"></app-sidebar>
-    <div class="flex-grow-1">
-        <main class="overflow-x-hidden overflow-y-auto bg-gray-100">
-            <div class="container mx-auto px-6 py-8">
-
-              <div class="titulo d-flex flex-wrap align-items-center justify-content-between">
-                <h2 class="text-success">{{ 'HOME.MOVEMENTS' | translate }}</h2>
-              </div>
+    <div class="flex-grow-1" style="overflow-y: auto; height: 100%;">
+        <main class="altura-main bg-gray-100 h-auto">
+            <div class="container h-auto px-6 ">
 
                 <!-- Loading State -->
                 <div *ngIf="loading" class="flex justify-center items-center py-8">
@@ -27,7 +23,7 @@
                     
                     <div class="row g-4">
                         <!-- Dinero Fluyendo -->
-                        <div class="col-md-4">
+                        <div class="col-md-6">
                             <div class="card h-auto pb-4">
                                 <div class="card-body">
                                     <h5 class="card-title text-success">{{ 'HOME.FLOWING_MONEY' | translate }}</h5>
@@ -40,7 +36,7 @@
                         </div>
 
                         <!-- Dinero Disponible -->
-                        <div class="col-md-4">
+                        <div class="col-md-6">
                             <div class="card h-auto pb-4">
                                 <div class="card-body">
                                     <h5 class="card-title text-success">{{ 'HOME.AVAILABLE_MONEY' | translate }}</h5>
@@ -52,85 +48,92 @@
                             </div>
                         </div>
 
-                        <!-- Prestamos Vencidos -->
-                        <div class="col-md-4">
-                            <div class="card h-100">
-                                <div class="card-body">
-                                    <div class="d-flex justify-content-between align-items-center mb-3">
-                                        <h5 class="card-title text-danger mb-0">{{ 'HOME.OVERDUE_LOANS' | translate }}</h5>
-                                        <span class="badge bg-danger">
-                                            {{resumen.prestamosVencidos.length}}
-                                        </span>
-                                    </div>
-                                    
-                                    <div class="list-group mt-3">
-                                        @for (prestamo of resumen.prestamosVencidos; track prestamo.idPrestamo) {
-                                            <div class="list-group-item border-0 border-bottom">
-                                                <div class="d-flex justify-content-between align-items-center">
-                                                    <div>
-                                                        <div class="fw-bold">
-                                                            {{prestamo.cliente?.nombres}} {{prestamo.cliente?.apellidos}}
-                                                        </div>
-                                                        <small class="text-danger">
-                                                            {{ 'HOME.DAYS_OVERDUE' | translate:{days: getDiasVencidos(prestamo.fechaVencimiento)} }}
-                                                        </small>
-                                                    </div>
-                                                    <span class="badge bg-danger rounded-pill">
-                                                        {{formatMoney(prestamo.montoPrestamo)}}
-                                                    </span>
-                                                </div>
-                                            </div>
-                                        } @empty {
-                                            <div class="text-center text-muted py-3">
-                                                {{ 'HOME.NO_OVERDUE_LOANS' | translate }}
-                                            </div>
-                                        }
-                                    </div>
                         
-                                   
-                                </div>
-                                <div class="card-body">
-                                    <div class="d-flex justify-content-between align-items-center mb-3">
-                                        <h5 class="card-title text-danger mb-0">Máquinas Vencidas</h5>
-                                        <span class="badge bg-danger">
-                                            {{resumen.maquinasVencidas.length}}
-                                        </span>
-                                    </div>
-                                    
-                                    <div class="list-group mt-3">
-                                        @for (prestamo of resumen.maquinasVencidas; track prestamo.idPrestamoMaquina) {
-                                            <div class="list-group-item border-0 border-bottom">
-                                                <div class="d-flex justify-content-between align-items-center">
-                                                    <div>
-                                                        <div class="fw-bold">
-                                                            {{prestamo.cliente?.nombres}} {{prestamo.cliente?.apellidos}}
-                                                        </div>
-                                                        <small class="text-danger">
-                                                            {{ 'HOME.DAYS_OVERDUE' | translate:{days: getDiasVencidos(prestamo.fechaVencimiento)} }}
-                                                        </small>
-                                                    </div>
-                                                    <span class="badge bg-danger rounded-pill">
-                                                        {{formatMoney(prestamo.montoPrestamo)}}
-                                                    </span>
-                                                </div>
-                                            </div>
-                                        } @empty {
-                                            <div class="text-center text-muted py-3">
-                                                {{ 'HOME.NO_OVERDUE_LOANS' | translate }}
-                                            </div>
-                                        }
-                                    </div>
+                    </div>
+                    <!-- Prestamos Vencidos -->
+                    <div class="col-md-12 mb-4 mt-4">
                         
-                                    @if (resumen.prestamosVencidos.length > 0) {
-                                        <div class="text-center mt-3">
-                                            <button class="btn btn-outline-danger btn-sm"
-                                                    routerLink="/prestamos"
-                                                    [queryParams]="{filter: 'vencidos'}">
-                                                {{ 'HOME.VIEW_ALL_OVERDUE_LOANS' | translate }}
-                                            </button>
+                        <div class="card card h-100">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="card-body">
+                                        <div class="d-flex justify-content-between align-items-center mb-3">
+                                            <h5 class="card-title text-danger mb-0">{{ 'HOME.OVERDUE_LOANS' | translate }}</h5>
+                                            <span class="badge bg-danger">
+                                                {{resumen.prestamosVencidos.length}}
+                                            </span>
                                         </div>
-                                    }
+                                        
+                                        <div class="list-group mt-3">
+                                            @for (prestamo of resumen.prestamosVencidos; track prestamo.idPrestamo) {
+                                                <div class="list-group-item border-0 border-bottom">
+                                                    <div class="d-flex justify-content-between align-items-center">
+                                                        <div>
+                                                            <div class="fw-bold">
+                                                                {{prestamo.cliente?.nombres}} {{prestamo.cliente?.apellidos}}
+                                                            </div>
+                                                            <small class="text-danger">
+                                                                {{ 'HOME.DAYS_OVERDUE' | translate:{days: getDiasVencidos(prestamo.fechaVencimiento)} }}
+                                                            </small>
+                                                        </div>
+                                                        <span class="badge bg-danger rounded-pill">
+                                                            {{formatMoney(prestamo.montoPrestamo)}}
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            } @empty {
+                                                <div class="text-center text-muted py-3">
+                                                    {{ 'HOME.NO_OVERDUE_LOANS' | translate }}
+                                                </div>
+                                            }
+                                        </div>
+                            
+                                        
+                                    </div>
                                 </div>
+                                <div class="col-md-6">
+                                    <div class="card-body">
+                                        <div class="d-flex justify-content-between align-items-center mb-3">
+                                            <h5 class="card-title text-danger mb-0">Máquinas Vencidas</h5>
+                                            <span class="badge bg-danger">
+                                                {{resumen.maquinasVencidas.length}}
+                                            </span>
+                                        </div>
+                                        
+                                        <div class="list-group mt-3">
+                                            @for (prestamo of resumen.maquinasVencidas; track prestamo.idPrestamoMaquina) {
+                                                <div class="list-group-item border-0 border-bottom">
+                                                    <div class="d-flex justify-content-between align-items-center">
+                                                        <div>
+                                                            <div class="fw-bold">
+                                                                {{prestamo.cliente?.nombres}} {{prestamo.cliente?.apellidos}}
+                                                            </div>
+                                                            <small class="text-danger">
+                                                                {{ 'HOME.DAYS_OVERDUE' | translate:{days: getDiasVencidos(prestamo.fechaVencimiento)} }}
+                                                            </small>
+                                                        </div>
+                                                        <span class="badge bg-danger rounded-pill">
+                                                            {{formatMoney(prestamo.montoPrestamo)}}
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            } @empty {
+                                                <div class="text-center text-muted py-3">
+                                                    {{ 'HOME.NO_OVERDUE_LOANS' | translate }}
+                                                </div>
+                                            }
+                                        </div>
+                                    </div>
+                                </div>
+                                @if (resumen.prestamosVencidos.length > 0) {
+                                            <div class="text-center mt-3 mb-3">
+                                                <button class="btn btn-outline-danger btn-sm"
+                                                        routerLink="/prestamos"
+                                                        [queryParams]="{filter: 'vencidos'}">
+                                                    {{ 'HOME.VIEW_ALL_OVERDUE_LOANS' | translate }}
+                                                </button>
+                                            </div>
+                                        }
                             </div>
                         </div>
                     </div>

@@ -36,11 +36,5 @@
         {{ 'LOGIN.SUBMIT_BUTTON' | translate }}
     </button>
 
-    <div class="center">
-        <a  (click)="onClienteClick($event)">{{ 'LOGIN.CONTINUE_AS_CLIENT' | translate }}</a>
-    </div>
-
-    <div class="center-two">
-        <a [routerLink]="['/login']" (click)="onOlvidePasswordClick($event)">{{ 'LOGIN.FORGOT_PASSWORD' | translate }}</a>
-    </div>
+    
 </div>
