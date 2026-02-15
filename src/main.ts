@@ -12,7 +12,6 @@ import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import { provideAnimations } from '@angular/platform-browser/animations';
 import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
 import { routes } from './app/app.routes';
-import { authInterceptor } from './app/core/interceptors/auth.interceptor';
 
 
 export function HttpLoaderFactory(http: HttpClient) {
@@ -25,8 +24,7 @@ bootstrapApplication(AppComponent, {
     provideRouter(routes),
     provideClientHydration(),
     provideHttpClient(
-      withFetch(),
-      withInterceptors([authInterceptor])
+      withFetch()
     ),
     provideAnimations(),
     importProvidersFrom(

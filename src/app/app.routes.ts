@@ -1,5 +1,4 @@
 import { Routes  } from '@angular/router';
-
 import { ClienteFormComponent } from './clientes/components/cliente-form/cliente-form.component';
 import { ClienteListaComponent } from './clientes/components/cliente-lista/cliente-lista.component';
 import { ClienteEditarComponent } from './clientes/components/cliente-editar/cliente-editar.component';
@@ -13,12 +12,7 @@ import { ClienteViewComponent } from './clientes/components/cliente-view/cliente
 import { PrestamosViewComponent } from './prestamos/components/prestamos-view/prestamos-view.component';
 import { PagosCrearComponent } from './pagos/components/pagos-crear/pagos-crear.component';
 import { MovimientosCrearComponent } from './movimientos/components/movimiento-crear/movimiento-crear.component';
-import { authGuard } from './core/guards/auth.guard';
-import { homeGuard } from './core/guards/home.guard';
-import { UsuariosCrearComponent } from './admin/components/usuarios-crear/usuarios-crear.component';
 import { ConfiguracionComponent } from './config/components/configuracion/configuracion.component';
-import { UsuariosListaComponent } from './admin/components/usuarios-lista/usuarios-lista.component';
-import { LoginTwoComponent } from './login/login-two/login-two.component';
 import { PrestamosCrearAgroComponent } from './prestamos/components/prestamos-crear-agro/prestamos-crear.component';
 import { PagosCrearMaquinaComponent } from './pagos/components/pagos-crear-maquina/pagos-crear.component';
 import { PrestamosMaquinaViewComponent } from './prestamos/components/prestamos-view-agro/prestamos-view.component';
@@ -31,37 +25,16 @@ export const routes: Routes = [
 
     {
       path: '',
-      canActivate: [homeGuard],
       component: HomeComponent
-    },
-
-    { path: 'login', component: LoginTwoComponent },  
-
-    {
-      path: 'usuarios/crear',
-      component: UsuariosCrearComponent,
-      canActivate: [authGuard],
-      data: { role: 'ADMIN' }
-    },
-
-    {
-      path: 'usuarios',
-      component: UsuariosListaComponent,
-      canActivate: [authGuard],
-      data: { role: 'ADMIN' }
     },
 
     {
         path: 'home',
         component: HomeComponent,
-        canActivate: [authGuard],
-        data: { role: 'GERENTE' }
     },
 
     {
         path: 'clientes',
-        canActivate: [authGuard],
-        data: { role: 'GERENTE' },
         children: [
         { path: '', component: ClienteListaComponent },
         { path: 'nuevo', component: ClienteFormComponent },
@@ -72,8 +45,6 @@ export const routes: Routes = [
 
     {
         path: 'prestamos',
-        canActivate: [authGuard],
-        data: { role: 'GERENTE' },
         children: [
           { path: '', component: PrestamosListaComponent },
           { path: 'nuevo', component: PrestamosCrearComponent },
@@ -87,8 +58,6 @@ export const routes: Routes = [
 
     {
         path: 'pagos',
-        canActivate: [authGuard],
-        data: { role: 'GERENTE' },
         children: [
           { path: '', component: PagosListaComponent },
           { path: 'nuevo', component: PagosCrearComponent },
@@ -98,8 +67,6 @@ export const routes: Routes = [
 
     {
         path: 'movimientos',
-        canActivate: [authGuard],
-        data: { role: 'GERENTE' },
         children: [
           { path: '', component: MovimientoListaComponent },
           { path: 'nuevo', component: MovimientosCrearComponent }
@@ -108,7 +75,6 @@ export const routes: Routes = [
 
     {
     path: '**',
-    canActivate: [homeGuard],
     component: HomeComponent
     }
 ];

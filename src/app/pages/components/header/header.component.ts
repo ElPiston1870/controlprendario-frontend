@@ -1,8 +1,6 @@
-// header.component.ts
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { SidebarService } from '../../services/sidebar.service';
 import { CommonModule } from '@angular/common';
-import { AuthService } from '../../../core/services/auth.service';
 import { Router, RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { debounceTime, distinctUntilChanged, Subject, Subscription, switchMap } from 'rxjs';
@@ -31,15 +29,14 @@ export class HeaderComponent implements OnInit, OnDestroy{
 
   constructor(
     private sidebarService: SidebarService,
-    private authService: AuthService,
     private router: Router,
     private prestamoService: PrestamoService,
     private translateService: TranslateService
   ) {}
 
   ngOnInit(): void {
-    this.userName = this.authService.getCurrentUsername();
-    const role = this.authService.getCurrentUserRole();
+    this.userName = 'Usuario';
+    const role = 'ADMIN';
     this.translateService.get(`ROLES.${role}`).subscribe((res: string) => {
       this.userRole = res;
     });
@@ -88,8 +85,7 @@ export class HeaderComponent implements OnInit, OnDestroy{
   }
 
   logout(): void {
-    this.authService.logout();
-    this.router.navigate(['/login']);
+    this.router.navigate(['/']);
   }
 
   onSearchInput(): void {
